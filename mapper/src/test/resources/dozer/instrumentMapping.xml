@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping
+          http://dozermapper.github.io/schema/bean-mapping.xsd">
+
+    <configuration>
+        <date-format>yyyy-MM-dd</date-format>
+    </configuration>
+
+    <mapping>
+        <class-a>java.util.Map</class-a>
+        <class-b bean-factory="com.mjdsft.dozerexample.FinancialObjectBuilder">
+            com.mjdsft.dozerexample.Instrument
+        </class-b>
+
+        <field custom-converter="com.mjdsft.dozerexample.IdCustomConverter">
+            <a>id</a>
+            <b>id</b>
+        </field>
+
+    </mapping>
+
+</mappings>

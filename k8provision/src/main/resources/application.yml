@@ -1,0 +1,26 @@
+logging:
+  level:
+    org.springframework: ERROR
+    com.oracle: DEBUG
+
+app:
+  applicationName: K8Provision
+  applicationDescription: ${app.applicationName} is a Spring Boot application
+
+---
+management:
+  endpoint:
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+      export:
+        prometheus:
+          enable: true
+
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+

@@ -1,0 +1,43 @@
+logging:
+  level:
+    org.springframework: ERROR
+    com.oracle: DEBUG
+
+app:
+  applicationName: Mapper
+  applicationDescription: ${app.applicationName} is a Spring Boot application
+
+---
+management:
+  endpoint:
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+      export:
+        prometheus:
+          enable: true
+
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+---
+
+spring:
+  profiles:
+    active: "dev"
+
+---
+
+spring:
+  profiles: dev
+  data:
+    mongodb.uri: mongodb://localhost:27017/db
+
+---
+spring:
+  profiles: prod
+  data:
+    mongodb.uri: mongodb://mongo:27017/db
+

@@ -1,0 +1,91 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.aais.ingester</groupId>
+  <artifactId>targetmodel</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>targetmodel</name>
+  <url>http://maven.apache.org</url>
+
+
+  <parent>
+    <groupId>com.aais.translateproto</groupId>
+    <artifactId>translatorParent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+    
+  <properties>
+    <java.version>11</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <dozer.version>6.4.1</dozer.version>
+    <csv.parser.version>1.5</csv.parser.version>
+    <ingestermodel.version>1.0-SNAPSHOT</ingestermodel.version>
+  </properties>
+
+  <dependencies>
+	 <dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-data-mongodb</artifactId>
+         <version>2.1.0.RELEASE</version>
+	</dependency>
+    <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-test</artifactId>
+          <scope>test</scope>
+    </dependency>
+    <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+    </dependency>
+      <dependency>
+          <groupId>com.github.dozermapper</groupId>
+          <artifactId>dozer-spring-boot-starter</artifactId>
+          <version>${dozer.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-csv</artifactId>
+          <version>${csv.parser.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>com.aais.ingester</groupId>
+          <artifactId>ingestermodel</artifactId>
+          <version>${ingestermodel.version}</version>
+      </dependency>
+  </dependencies>
+
+  <build>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                  <debug>true</debug>
+                  <source>${maven.compiler.source}</source>
+                  <target>${maven.compiler.target}</target>
+              </configuration>
+          </plugin>
+      </plugins>
+   </build>
+
+    <repositories>
+        <repository>
+            <id>spring-releases</id>
+            <name>Spring Releases</name>
+            <url>https://repo.spring.io/libs-release</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-releases</id>
+            <name>Spring Releases</name>
+            <url>https://repo.spring.io/libs-release</url>
+        </pluginRepository>
+    </pluginRepositories>
+  
+</project>

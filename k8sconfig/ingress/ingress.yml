@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: translator-ingress
+  namespace: default
+  labels:
+    team: mjdsft
+spec:
+  rules:
+  - host: mapper.localhost
+    http:
+      paths:
+        - backend:
+            serviceName: mapper
+            servicePort: 8080
+  - host: ingester.localhost
+    http: 
+      paths:
+        - backend:
+            serviceName: ingester
+            servicePort: 8080

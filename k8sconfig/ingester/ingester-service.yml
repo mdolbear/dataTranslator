@@ -1,0 +1,23 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingester 
+  labels:
+    app: ingester 
+    tier: backend
+    team: mjdsft
+spec:
+  type: NodePort
+  ports:
+  - name: svcport
+    port: 8080
+    targetPort: 8080
+#This would normally not be here, nor NodePort above, but I have left them for debug
+  - name: debug
+    port: 4000
+    protocol: TCP
+    targetPort: 4000
+  selector:
+    app: ingester 
+    tier: backend
