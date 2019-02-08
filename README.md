@@ -120,21 +120,21 @@ sudo vi /etc/hosts
         
      -Add conversion files to the data translate definition:
      
-        '''curl -F "file=@/Users/michaeld/code/translatorPrototype/mapper/src/test/resources/dozer/InstrumentMapping.xml" -F "profileId=carrierXMappings" http://mapper.localhost/mapper/addOrUpdateNodeFile'''
+        '''curl -F "file=@/Users/michaeldolbear/code/myprojects/dataTranslator/mapper/src/test/resources/dozer/InstrumentMapping.xml" -F "profileId=carrierXMappings" http://mapper.localhost/mapper/addOrUpdateNodeFile'''
         
         Example response:
         
         {"id":"5c22ce4b97cdfb0009952931","userProfileIdentifier":"carrierXMappings","creationDate":"2018-12-26T00:41:47.616+0000","version":1,"translatorNodes":[{"id":"5c239b2a97cdfb0009952934","filename":"InstrumentMapping.xml"}],"sourceObjectDescription":{"id":"5c22ce4b97cdfb0009952930","fields":[]},"targetClassName":"com.mjdsft.dozerexample.Future"}
         
         
-        '''curl -F "file=@/Users/michaeld/code/translatorPrototype/mapper/src/test/resources/dozer/FutureMapping.xml" -F "profileId=carrierXMappings" http://mapper.localhost/mapper/addOrUpdateNodeFile'''
+        '''curl -F "file=@/Users/michaeldolbear/code/myprojects/dataTranslator/mapper/src/test/resources/dozer/FutureMapping.xml" -F "profileId=carrierXMappings" http://mapper.localhost/mapper/addOrUpdateNodeFile'''
         
         Example response:
         {"id":"5c22ce4b97cdfb0009952931","userProfileIdentifier":"carrierXMappings","creationDate":"2018-12-26T00:41:47.616+0000","version":1,"translatorNodes":[{"id":"5c239b2a97cdfb0009952934","filename":"InstrumentMapping.xml"},{"id":"5c239bac97cdfb0009952939","filename":"FutureMapping.xml"}],"sourceObjectDescription":{"id":"5c22ce4b97cdfb0009952930","fields":[]},"targetClassName":"com.mjdsft.dozerexample.Future"}
 
     -Add source object fields:
     
-        ```curl -X POST http://mapper.localhost/mapper/addSourceFields?profileId=carrierXMappings&fields=instrumentType,externalId,id,symbol,underlyingId,expirationDate,effectiveDate,contractSize,futureType,firstNoticeDate,lastTradingDate'''
+        ```curl -X POST "http://mapper.localhost/mapper/addSourceFields?fields=instrumentType%2CexternalId%2Cid%2Csymbol%2CunderlyingId%2CexpirationDate%2CeffectiveDate%2CcontractSize%2CfutureType%2CfirstNoticeDate%2ClastTradingDate&fields=&profileId=carrierXMappings" -H "accept: */*"'''
         
         Example response: 
         
@@ -194,7 +194,7 @@ ingester      1         1         1            1           6m *** get ingester d
 k8provision   1         1         1            1           6m
 mapper        1         1         1            1           6m
 mongo         1         1         1            1           6m
-ip-192-168-0-50:translatorPrototype michaeld$
+ip-192-168-0-50:dataTranslator michaeldolbear$
 
 kubectl port-forward k8provision-65766d9b86-ltd2h 8080:8080 -- to get access to the internal k8s provisining service
 
@@ -202,7 +202,7 @@ curl -d "namespace=default&deployment=ingester&numpods=2&insideCluster=true" -X 
 
 Now after running the scale operation, go look at the ingester pods:
 
-5c27e41a12124e0008a2673aip-192-168-0-50:translatorPrototype michaeld$ kubectl get pods
+5c27e41a12124e0008a2673aip-192-168-0-50:dataTranslator michaeldolbear$ kubectl get pods
 
 NAME                           READY     STATUS    RESTARTS   AGE
 

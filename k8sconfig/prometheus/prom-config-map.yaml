@@ -110,5 +110,5 @@ data:
           target_label: __address__
         - source_labels: [__meta_kubernetes_pod_label_team]
           action: keep
-          regex: aais 
+          regex: mjdsft
 
