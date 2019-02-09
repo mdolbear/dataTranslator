@@ -8,10 +8,13 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Document(collection="mapperCollection")
-@ToString(of = {"id", "userProfileIdentifier"})
+@ToString(of = {"id", "userProfileIdentifier", "version"})
 public class DataTranslateDefinition {
 
     @Getter() @Setter(AccessLevel.PRIVATE)
@@ -46,20 +49,22 @@ public class DataTranslateDefinition {
         super();
         this.setTranslatorNodes(new ArrayList<NodeTranslateDefinition>());
         this.setCreationDate(new Date());
-        this.setVersion(1);
     }
 
     /**
      * Answer an instance of me on the arguments below
      * @param anIdentifier String
+     * @param aVersionId int
      * @param aSourceObjectDescription ObjectDescription
      */
     public DataTranslateDefinition(String anIdentifier,
+                                   int aVersionId,
                                    String aTargetClassName,
                                    ObjectDescription aSourceObjectDescription) {
 
         this();
         this.setUserProfileIdentifier(anIdentifier);
+        this.setVersion(aVersionId);
         this.setSourceObjectDescription(aSourceObjectDescription);
         this.setTargetClassName(aTargetClassName);
 

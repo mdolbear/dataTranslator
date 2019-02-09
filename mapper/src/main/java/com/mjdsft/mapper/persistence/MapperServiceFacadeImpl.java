@@ -1,9 +1,9 @@
 package com.mjdsft.mapper.persistence;
 
+import com.google.common.io.ByteStreams;
 import com.mjdsft.mapper.model.DataTranslateDefinition;
 import com.mjdsft.mapper.model.NodeTranslateDefinition;
 import com.mjdsft.mapper.model.ObjectDescription;
-import com.google.common.io.ByteStreams;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -48,34 +48,39 @@ public class MapperServiceFacadeImpl implements MapperServiceFacade {
     /**
      * Answer a new data translate definition for aUserProfileId. Answer the id
      * @param aUserProfileId String
+     * @param aVersionId int
      * @param aTargetClassname String
      * @return String
      */
     @Override
-    //TODO -- Currently do not allow new versions...this needs to be changed
     public String createNewDataTranslateDefinition(@NonNull String aUserProfileId,
+                                                   int aVersionId,
                                                    @NonNull String aTargetClassname) {
 
         DataTranslateDefinition tempDef;
 
-        tempDef = this.findDataTranslateDefinitionForProfileId(aUserProfileId);
-        this.validateDataTranslateDoesNotExistFor(aUserProfileId, tempDef);
+        tempDef = this.findDataTranslateDefinitionForProfileIdAndVersion(aUserProfileId, aVersionId);
+        this.validateDataTranslateDoesNotExistFor(aUserProfileId, aVersionId, tempDef);
 
         return this.basicCreateDataTranslationDefinition(aUserProfileId,
+                                                         aVersionId,
                                                          aTargetClassname);
     }
 
     /**
      * Create and save Data Translation Definition
      * @param aUserProfileId String
+     * @param aVersionId int
      * @return String
      */
     private String basicCreateDataTranslationDefinition(String aUserProfileId,
+                                                        int aVersionId,
                                                         String aTargetClassname) {
 
         DataTranslateDefinition tempDef;
 
         tempDef = new DataTranslateDefinition(aUserProfileId,
+                                              aVersionId,
                                               aTargetClassname,
                                               new ObjectDescription());
 
@@ -87,21 +92,13 @@ public class MapperServiceFacadeImpl implements MapperServiceFacade {
     /**
      * Answer a data translate definition for aUserProfileId
      * @param aUserProfileId String
-     * @return DataTranslateDefinition
+     * @return List
      */
     @Override
-    public DataTranslateDefinition findDataTranslateDefinitionForProfileId(@NonNull String aUserProfileId) {
+    public List<DataTranslateDefinition> findDataTranslateDefinitionForProfileId(@NonNull String aUserProfileId) {
 
-        DataTranslateDefinition             tempResult = null;
-        List<DataTranslateDefinition>       tempDefs;
-        Optional<DataTranslateDefinition>   tempOpt;
+        return this.getRepository().findTranslationsByUserProfileIdentifier(aUserProfileId);
 
-        tempDefs = this.getRepository().findTranslationsByUserProfileIdentifier(aUserProfileId);
-        tempOpt = tempDefs.stream().findFirst();
-
-        tempResult = this.getDataTranslateDefinitionIfPresent(tempOpt);
-
-        return tempResult;
     }
 
     /**
@@ -114,7 +111,7 @@ public class MapperServiceFacadeImpl implements MapperServiceFacade {
     public DataTranslateDefinition findDataTranslateDefinitionForProfileIdAndVersion(@NonNull String aUserProfileId,
                                                                                      int aVersion) {
 
-        DataTranslateDefinition             tempResult = null;
+        DataTranslateDefinition             tempResult;
         List<DataTranslateDefinition>       tempDefs;
         Optional<DataTranslateDefinition>   tempOpt;
 
@@ -130,8 +127,8 @@ public class MapperServiceFacadeImpl implements MapperServiceFacade {
 
     /**
      * Answer a data translation definition from anOptional if present
-     * @param anOptional
-     * @return
+     * @param anOptional Optional
+     * @return DataTranslateDefinition
      */
     private DataTranslateDefinition
             getDataTranslateDefinitionIfPresent(Optional<DataTranslateDefinition> anOptional) {
@@ -186,19 +183,21 @@ public class MapperServiceFacadeImpl implements MapperServiceFacade {
     /**
      * Add or update node translation for aName and anInputStream
      * @param aUserProfileId String
+     * @param aVersionId int
      * @param aName String
      * @param anInputStream InputStream
      */
     @Override
     public NodeTranslateDefinition addOrUpdateNodeTranslateFor(@NonNull String aUserProfileId,
+                                                               int aVersionId,
                                                                @NonNull String aName,
                                                                @NonNull InputStream anInputStream) {
 
         DataTranslateDefinition tempDataTranslateDef;
         NodeTranslateDefinition tempResult;
 
-        tempDataTranslateDef = this.findDataTranslateDefinitionForProfileId(aUserProfileId);
-        this.validateDataTranslateExistsFor(aUserProfileId, tempDataTranslateDef);
+        tempDataTranslateDef = this.findDataTranslateDefinitionForProfileIdAndVersion(aUserProfileId, aVersionId);
+        this.validateDataTranslateExistsFor(aUserProfileId, aVersionId, tempDataTranslateDef);
 
         tempResult = tempDataTranslateDef.getTranslatorNodeNamed(aName);
         if (tempResult == null) {
@@ -217,18 +216,20 @@ public class MapperServiceFacadeImpl implements MapperServiceFacade {
     }
 
     /**
-     * Add source fields for a data translate defined for aUserProfileId
+     * Add source fields for a data translate defined for aUserProfileId and aVersionId
      * @param aUserProfileId String
+     * @param aVersionId int
      * @param aFieldNames List
      */
     @Override
     public DataTranslateDefinition addSourceFieldsForDataTranslateDefinition(@NonNull String aUserProfileId,
+                                                                             int aVersionId,
                                                                              @NonNull List<String> aFieldNames) {
 
         DataTranslateDefinition tempDataTranslateDef;
 
-        tempDataTranslateDef = this.findDataTranslateDefinitionForProfileId(aUserProfileId);
-        this.validateDataTranslateExistsFor(aUserProfileId, tempDataTranslateDef);
+        tempDataTranslateDef = this.findDataTranslateDefinitionForProfileIdAndVersion(aUserProfileId, aVersionId);
+        this.validateDataTranslateExistsFor(aUserProfileId, aVersionId, tempDataTranslateDef);
 
         tempDataTranslateDef.updateSourceObjectFields(aFieldNames);
         this.getRepository().save(tempDataTranslateDef);
@@ -239,15 +240,18 @@ public class MapperServiceFacadeImpl implements MapperServiceFacade {
     /**
      * Validate that a data translate definition exists for aUserProfileId
      * @param aUserProfileId String
+     * @param aVersionId int
      * @param aTranslate DataTranslateDefinition
      */
     private void validateDataTranslateExistsFor(String aUserProfileId,
+                                                int aVersionId,
                                                 DataTranslateDefinition aTranslate) {
 
         if (aTranslate == null) {
 
-            throw new IllegalStateException("No Data Translate Definition exists for profileId: " +
-                                            aUserProfileId);
+            throw new IllegalStateException("No Data Translate Definition exists for profileId: "
+                                            + aUserProfileId +
+                                            " and version: " + aVersionId);
         }
 
     }
@@ -255,15 +259,17 @@ public class MapperServiceFacadeImpl implements MapperServiceFacade {
     /**
      * Validate that a data translate definition exists for aUserProfileId
      * @param aUserProfileId String
+     * @param aVersionId int
      * @param aTranslate DataTranslateDefinition
      */
     private void validateDataTranslateDoesNotExistFor(String aUserProfileId,
+                                                      int aVersionId,
                                                       DataTranslateDefinition aTranslate) {
 
         if (aTranslate != null) {
 
             throw new IllegalStateException("Data Translate Definition already exists for profileId: " +
-                    aUserProfileId);
+                    aUserProfileId + " and version: " + aVersionId);
         }
 
     }
@@ -308,7 +314,6 @@ public class MapperServiceFacadeImpl implements MapperServiceFacade {
     /**
      * Create and throw input stream access error
      * @param e IOException
-     * @return
      */
     private void createAndThrowInputStreamAccessError(IOException e) {
 

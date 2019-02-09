@@ -1,3 +1,4 @@
+import com.google.common.io.ByteStreams;
 import com.mjdsft.ingester.IngesterApplication;
 import com.mjdsft.ingester.info.DataRunInfo;
 import com.mjdsft.ingester.model.DataRunState;
@@ -5,7 +6,6 @@ import com.mjdsft.mapper.model.DataTranslateDefinition;
 import com.mjdsft.mapper.model.NodeTranslateDefinition;
 import com.mjdsft.mapper.model.ObjectDescription;
 import com.mjdsft.mapper.model.ObjectField;
-import com.google.common.io.ByteStreams;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,6 +54,7 @@ public class IngesterControllerTest {
     //Constants
     private static final String URL_PREFIX = "http://localhost:";
     private static final String USER_PROFILE_ID = "carrierXMappings";
+    private static final int VERSION_ID = 1;
     private static String TEST_FILE_PATH = "/testdata";
     private static String CREATE_AND_START_DATA_RUN_URI = "/ingester/create";
     private static String FIND_DATA_RUN_BY_PROFILE_ID = "/ingester/dataRunsByProfileId";
@@ -268,7 +269,7 @@ public class IngesterControllerTest {
 
     /**
      * Find DatRunInfo by profile id and state
-     * @param aTemplate RestTemlate
+     * @param aTemplate RestTemplate
      * @param aProfileId String
      * @return DataRunInfo
      * @throws Exception
@@ -291,9 +292,9 @@ public class IngesterControllerTest {
 
     /**
      * Perform find by id
-     * @param aTemplate
-     * @param anId
-     * @return
+     * @param aTemplate RestTemplate
+     * @param anId String
+     * @return DataRunInfo
      * @throws Exception
      */
     private DataRunInfo
@@ -343,7 +344,7 @@ public class IngesterControllerTest {
     /**
      * Answer the absolute path to my test data
      * @return String
-     * @throws IOException
+     * @throws IOException File load failure
      */
     private String getAbsolutePathForTestData() throws IOException {
 
@@ -383,6 +384,7 @@ public class IngesterControllerTest {
 
         tempDef =
                 new DataTranslateDefinition(USER_PROFILE_ID,
+                                            VERSION_ID,
                                             TARGET_CLASS_NAME,
                                             this.createSourceObjectDescription());
 
@@ -414,7 +416,6 @@ public class IngesterControllerTest {
             throws Exception {
 
         InputStream tempStream;
-        File tempFile;
         ClassPathResource   tempResource;
 
         tempResource = new ClassPathResource(aFilePath);

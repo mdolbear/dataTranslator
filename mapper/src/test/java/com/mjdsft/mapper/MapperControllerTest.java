@@ -50,6 +50,7 @@ public class MapperControllerTest {
     private static final String TARGET_CLASS_NAME = "com.mjdsft.dozerexample.Future";
 
     private static final String USER_PROFILE_ID = "carrierXMappings";
+    private static final int VERSION_ID = 1;
 
     /**
      * Simple data translate definition create and delete test
@@ -62,10 +63,12 @@ public class MapperControllerTest {
         String                              tempId;
         DataTranslateDefinitionInfo         tempDataTranslateDefInfo;
         List<String>                        tempSourceFields;
+        int                                 tempVersionId = VERSION_ID;
 
         //Create Data Translate Definition and save off returned persistent id
         tempId = this.performCreateDataTranslateDefTest(tempTemplate,
                                                         tempProfileId,
+                                                        tempVersionId,
                                                         TARGET_CLASS_NAME);
 
         //Make sure it exists -- find by id
@@ -73,7 +76,9 @@ public class MapperControllerTest {
         assertTrue("Data translate not found for id", tempDataTranslateDefInfo != null);
 
         //Make sure it exists -- find by profile id
-        tempDataTranslateDefInfo = this.performFindDataTranslateDefByProfileId(tempTemplate, tempProfileId);
+        tempDataTranslateDefInfo = this.performFindDataTranslateDefByProfileIdAndVersion(tempTemplate,
+                                                                                         tempProfileId,
+                                                                                         tempVersionId);
         assertTrue("Data translate not found for id", tempDataTranslateDefInfo != null);
 
         //Make sure it exists -- find by profile id and version
@@ -88,6 +93,7 @@ public class MapperControllerTest {
         tempDataTranslateDefInfo =
                 this.performAddSourceFieldsTest(tempTemplate,
                                                 tempProfileId,
+                                                tempVersionId,
                                                 tempSourceFields);
         assertTrue("Source field lists are not equal",
                     tempDataTranslateDefInfo.getSourceObjectDescription() != null
@@ -97,6 +103,7 @@ public class MapperControllerTest {
         //Add a node file to the data translate definition
         tempDataTranslateDefInfo = this.performFileUploadTest(tempTemplate,
                                                               tempProfileId,
+                                                              tempVersionId,
                                                               TEST_FILE1_PATH,
                                                    true);
         assertTrue("File was not loaded",
@@ -105,6 +112,7 @@ public class MapperControllerTest {
         //Add a second node file to the data translate definition
         tempDataTranslateDefInfo = this.performFileUploadTest(tempTemplate,
                                                               tempProfileId,
+                                                              tempVersionId,
                                                               TEST_FILE2_PATH,
                                                             true);
         assertTrue("File was not loaded",
@@ -114,7 +122,9 @@ public class MapperControllerTest {
         this.performDeleteDataTranslateDefTest(tempTemplate, tempId);
 
         //Make sure it does not exist -- find by id
-        tempDataTranslateDefInfo = this.performFindDataTranslateDefById(tempTemplate, tempId);
+        tempDataTranslateDefInfo = this.performFindDataTranslateDefByProfileIdAndVersion(tempTemplate,
+                                                                                         tempProfileId,
+                                                                                         tempVersionId);
         assertTrue("Data translate not found for id", tempDataTranslateDefInfo == null);
 
 
@@ -158,11 +168,13 @@ public class MapperControllerTest {
      * Perform create data translate test
      * @param aTemplate RestTemplate
      * @param aProfileId String
+     * @param aVersionId int
      * @param aTargetClassname String
      * @return String
      */
     private String performCreateDataTranslateDefTest(RestTemplate aTemplate,
                                                      String aProfileId,
+                                                     int aVersionId,
                                                      String aTargetClassname)
             throws IOException {
 
@@ -173,6 +185,7 @@ public class MapperControllerTest {
 
         tempResultId = aTemplate.postForObject(tempUrl,
                                                this.createFormDataForProfileIdAndTargetClass(aProfileId,
+                                                                                             aVersionId,
                                                                                              aTargetClassname),
                                                String.class);
 
@@ -209,11 +222,13 @@ public class MapperControllerTest {
      * Perform add source fields test
      * @param aTemplate RestTemplate
      * @param aProfileId String
+     * @param aVersionId int
      * @param aSourceFields List
      * @return DataTranslateDefinitionInfo
      */
     private DataTranslateDefinitionInfo performAddSourceFieldsTest(RestTemplate aTemplate,
                                                                    String aProfileId,
+                                                                   int aVersionId,
                                                                    List<String> aSourceFields)
                         throws IOException {
 
@@ -222,7 +237,9 @@ public class MapperControllerTest {
 
         tempUrl = this.getUrlPrefixWithPort()
                     + ADD_SOURCE_FIELDS_URI
-                    + "?profileId="+ aProfileId +"&fields=" + String.join(",", aSourceFields);
+                    + "?profileId="+ aProfileId
+                    + "&versionId=" + aVersionId
+                    +"&fields=" + String.join(",", aSourceFields);
 
         tempResponse = aTemplate
                             .postForEntity(tempUrl,
@@ -240,10 +257,16 @@ public class MapperControllerTest {
     /**
      * Perform file upload test
      * @param aTemplate RestTemplate
+     * @param aProfileId String
+     * @param aVersionId int
      * @param aFilename String
+     * @param isExistsFile boolean
+     * @return
+     * @throws IOException
      */
     private DataTranslateDefinitionInfo performFileUploadTest(RestTemplate aTemplate,
                                                               String aProfileId,
+                                                              int aVersionId,
                                                               String aFilename,
                                                               boolean isExistsFile) throws IOException {
 
@@ -255,7 +278,9 @@ public class MapperControllerTest {
         tempResponse = aTemplate
                 .postForEntity(tempUrl,
                         this.createFormDataForUploadNode(aProfileId,
-                                                         aFilename, isExistsFile),
+                                                         aVersionId,
+                                                         aFilename,
+                                                         isExistsFile),
                         DataTranslateDefinitionInfo.class);
         assertEquals("Result is null or wrong status code",
                      HttpStatus.OK,
@@ -267,11 +292,13 @@ public class MapperControllerTest {
     /**
      * Create form data with a file
      * @param aProfileId String
+     * @param aVersionId int
      * @param aFilename String
-     * @parqm isFileExists boolean
+     * @param isFileExists boolean
      * @return HttpEntity
      */
     private HttpEntity<MultiValueMap<String, Object>> createFormDataForUploadNode(String aProfileId,
+                                                                                  int aVersionId,
                                                                                   String aFilename,
                                                                                   boolean isFileExists)
             throws IOException {
@@ -281,6 +308,7 @@ public class MapperControllerTest {
 
         tempHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
         tempParams.add("profileId", aProfileId);
+        tempParams.add("versionId", String.valueOf(aVersionId));
         tempParams.add("file", this.createFileResource(aFilename, isFileExists));
 
         return new HttpEntity<>(tempParams, tempHeaders);
@@ -314,17 +342,21 @@ public class MapperControllerTest {
     /**
      * Create form data for profileId
      * @param aProfileId String
+     * @param aVersionId int
      * @param aTargetClassname String
      * @return HttpEntity
      */
     private HttpEntity<MultiValueMap<String, String>>
-                createFormDataForProfileIdAndTargetClass(String aProfileId, String aTargetClassname) {
+                createFormDataForProfileIdAndTargetClass(String aProfileId,
+                                                         int aVersionId,
+                                                         String aTargetClassname) {
 
         MultiValueMap<String, String>     tempParams = new LinkedMultiValueMap<>();
         HttpHeaders                       tempHeaders = new HttpHeaders();
 
         tempHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         tempParams.add("profileId", aProfileId);
+        tempParams.add("versionId", String.valueOf(aVersionId));
         tempParams.add("targetClass", aTargetClassname);
 
         return new HttpEntity<>(tempParams, tempHeaders);
@@ -365,28 +397,6 @@ public class MapperControllerTest {
 
     }
 
-    /**
-     * Perform find bu profile id
-     * @param aProfileId String
-     * @return DataTranslateDefinitionInfo
-     * @throws Exception Failed rest invocation
-     */
-    private DataTranslateDefinitionInfo
-                    performFindDataTranslateDefByProfileId(RestTemplate aTemplate,
-                                                           String aProfileId) throws Exception {
-
-        DataTranslateDefinitionInfo                     tempResult;
-
-        tempResult =
-                aTemplate.getForObject(this.getUrlPrefixWithPort()
-                                        + GET_DATA_TRANS_DEF_BY_PROFILEID_URI
-                                        +"?profileId="+ aProfileId,
-                                        DataTranslateDefinitionInfo.class);
-
-        return tempResult;
-
-    }
-
 
     /**
      * Perform find bu profile id
@@ -397,7 +407,7 @@ public class MapperControllerTest {
     private DataTranslateDefinitionInfo
         performFindDataTranslateDefByProfileIdAndVersion(RestTemplate aTemplate,
                                                          String aProfileId,
-                                                         int aVersion) throws Exception {
+                                                         int aVersion) {
 
         DataTranslateDefinitionInfo                     tempResult;
 
@@ -419,7 +429,7 @@ public class MapperControllerTest {
      */
     private DataTranslateDefinitionInfo
             performFindDataTranslateDefById(RestTemplate aTemplate,
-                                            String anId) throws Exception {
+                                            String anId)  {
 
         DataTranslateDefinitionInfo                     tempResult;
 

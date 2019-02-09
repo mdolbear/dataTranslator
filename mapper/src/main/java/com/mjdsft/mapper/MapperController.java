@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -56,14 +57,18 @@ public class MapperController {
      * Create data translate definition for aProfileId
      * @param aProfileId String
      * @param aTargetClassname String
+     * @param aVersionId int
      */
     @PostMapping("/create")
     public String createDataTranslateDefinition(@RequestParam("profileId") String aProfileId,
+                                                @RequestParam("versionId") int aVersionId,
                                                 @RequestParam("targetClass") String aTargetClassname) {
 
         String  tempId;
 
+        this.validateNonZeroPositiveVersionId(aVersionId);
         tempId = this.getMapperService().createNewDataTranslateDefinition(aProfileId,
+                                                                          aVersionId,
                                                                           aTargetClassname);
         return tempId;
 
@@ -99,25 +104,31 @@ public class MapperController {
     /**
      * Add or update node translation for aName and anInputStream
      * @param aUserProfileId String
+     * @param aVersionId int
      * @param aFile MultipartFile
      * @return ResponseEntity
      */
     @PostMapping("/addOrUpdateNodeFile")
     public ResponseEntity<DataTranslateDefinitionInfo>
                 addOrUpdateNodeTranslateFor(@RequestParam("profileId")  String aUserProfileId,
+                                            @RequestParam("versionId") int aVersionId,
                                             @RequestParam("file") MultipartFile aFile) {
 
         DataTranslateDefinition tempDataTranslateDef = null;
 
         this.logFile(aFile);
         this.validateFileNotNullOrEmpty(aFile);
+        this.validateNonZeroPositiveVersionId(aVersionId);
+
         try {
 
             this.getMapperService().addOrUpdateNodeTranslateFor(aUserProfileId,
+                                                                aVersionId,
                                                                 aFile.getOriginalFilename(),
                                                                 aFile.getInputStream());
             tempDataTranslateDef =
-                    this.getMapperService().findDataTranslateDefinitionForProfileId(aUserProfileId);
+                    this.getMapperService().findDataTranslateDefinitionForProfileIdAndVersion(aUserProfileId,
+                                                                                              aVersionId);
 
         }
         catch (IOException e) {
@@ -134,25 +145,28 @@ public class MapperController {
     /**
      * Add source fields to a data translate definition
      * @param aUserProfileId String
+     * @param aVersionId int
      * @param aFields List
      * @return ResponseEntity
      */
     @PostMapping("/addSourceFields")
     public ResponseEntity<DataTranslateDefinitionInfo>
                 addSourceFieldsForDataTranslateDefinition(@RequestParam("profileId")  String aUserProfileId,
+                                                          @RequestParam("versionId") int aVersionId,
                                                           @RequestParam("fields") List<String> aFields) {
 
         DataTranslateDefinition tempDef;
 
-
+        this.validateNonZeroPositiveVersionId(aVersionId);
         tempDef = this.getMapperService().addSourceFieldsForDataTranslateDefinition(aUserProfileId,
+                                                                                    aVersionId,
                                                                                     aFields);
         return this.produceSuccessfulResponseState(this.asDataTranslateDefinitionInfo(tempDef));
 
     }
 
 
-    /**
+  /**
    * Validate file not null or empty
    * @param aFile MultipartFile
    */
@@ -171,6 +185,22 @@ public class MapperController {
     }
 
     /**
+     * Validate non-zero version id
+     * @param aVersionId int
+     */
+    private void validateNonZeroPositiveVersionId(int aVersionId) {
+
+        if (aVersionId <= 0) {
+
+            val tempMsg = "Version id must be > 0";
+            this.logAndThrowException(tempMsg,
+                    new RuntimeException(tempMsg));
+
+        }
+
+    }
+
+    /**
      * Answer a successful response for HttpStatus with the state of the NodeTranslateDefinition
      * @param anInfo DataTranslateDefinitionInfo
      * @return RepositoryEntity
@@ -180,6 +210,26 @@ public class MapperController {
 
         return new ResponseEntity(anInfo, HttpStatus.OK);
     }
+
+
+    /**
+     * Answer a list of data translate definitions
+     * @param aDefinitions List
+     * @return List
+     */
+    private List<DataTranslateDefinitionInfo>
+        asDataTranslateDefinitionInfos(List<DataTranslateDefinition> aDefinitions) {
+
+        List<DataTranslateDefinitionInfo> tempResult = new ArrayList<>();
+
+        for (DataTranslateDefinition aDef: aDefinitions) {
+
+            tempResult.add(this.asDataTranslateDefinitionInfo(aDef));
+        }
+
+        return tempResult;
+    }
+
 
     /**
      * Answer a data translate definition info for non null data translate definition
@@ -206,12 +256,12 @@ public class MapperController {
      * @return DataTranslateDefinitionInfo
      */
     @GetMapping("/dataTranslatorByProfileId")
-    public DataTranslateDefinitionInfo findDataTranslatorByProfileId(@RequestParam("profileId") String aProfileId) {
+    public List<DataTranslateDefinitionInfo> findDataTranslatorByProfileId(@RequestParam("profileId") String aProfileId) {
 
-        DataTranslateDefinition         tempObj;
+        List<DataTranslateDefinition>         tempObj;
 
         tempObj = this.getMapperService().findDataTranslateDefinitionForProfileId(aProfileId);
-        return  this.asDataTranslateDefinitionInfo(tempObj);
+        return  this.asDataTranslateDefinitionInfos(tempObj);
 
     }
 

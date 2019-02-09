@@ -60,6 +60,7 @@ public class IngesterTest {
     private static int   NUMBER_OF_TEST_DATA_FILES = 3;
     private static final String TARGET_CLASS_NAME = "com.mjdsft.dozerexample.Future";
     private static final String USER_PROFILE_ID = "carrierXMappings";
+    private static final int VERSION_ID = 1;
     private static final int NUMBER_OF_LINES_TO_PARSE = 1000;
 
     private static final int PARSER_TIMEOUT = 600 * 1000;
@@ -123,7 +124,7 @@ public class IngesterTest {
     /**
      * Answer the absolute path to my test data
      * @return String
-     * @throws IOException
+     * @throws IOException Failed to load file from class path
      */
     private String getAbsolutePathForTestData() throws IOException {
 
@@ -225,6 +226,7 @@ public class IngesterTest {
 
         tempDef =
                 new DataTranslateDefinition(USER_PROFILE_ID,
+                                            VERSION_ID,
                                             TARGET_CLASS_NAME,
                                             this.createSourceObjectDescription());
 
@@ -255,8 +257,7 @@ public class IngesterTest {
     private byte[] getBytesFromFile(String aFilePath)
                     throws Exception {
 
-        InputStream tempStream;
-        File                tempFile;
+        InputStream         tempStream;
         ClassPathResource   tempResource;
 
         tempResource = new ClassPathResource(aFilePath);

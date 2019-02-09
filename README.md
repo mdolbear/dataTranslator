@@ -1,4 +1,4 @@
-#@Project : Unversal Translator Prototype
+#@Project : Universal Translator Prototype
 
 ![](images/TranslatorPrototypeDeployment.png)
 
@@ -6,15 +6,13 @@ The goal fo this project is to demonstrate some of the technologies that can be 
 (https://www.cncf.io/projects/). These technologies faciliate portability between cloud vendors without locking into
 their particular platforms.
 
-Its secondary as to whether the prototype serves as a staring point for the universal translator for openIDL. The 
-initial development time for this project was about one week. There are a few known missing parts:
+This prototype represents a scalable data translator Theinitial development time for this project was about one week. 
+There are a few known missing parts:
 
-- Versioning of data translate definitions is not yet functional.
-- I meant to include Kubernetes api capabilities available via a rest interface, and that is still missing.
 - Significant unit tests need to be added to improve code coverage.
  
 
-#Project Prerequistes
+#Project Prerequisites
 
 - Java 11 -- On a mac, brew cask install java will install java 11.
 
@@ -36,7 +34,7 @@ and there is a faux back-end called and OutputConnection that is meant to be a d
 other target system we want the output data to be sent to. The current OutputConnection implementation just writes
 its output to logs.
 
-Once all of the prequisites have been installed, the following commands can be used to build it:
+Once all of the prerequisites have been installed, the following commands can be used to build it:
 
 ```mvn clean install```  - will do a clean, build, and run all test cases
 ```mvn clean install -P build-docker-image``` - will be the above plus build and deposit docker images into the 
@@ -85,7 +83,7 @@ namespaces respectively.
 ```mvn clean install -P build-docker-image``` -- This will build all projects, run all tests, create docker images for the
 mapper and the ingester, and deposit the docker images into the docker repository where kuberrnetes can get them.
 
-- Create kuvbernetes cluster:
+- Create kubernetes cluster:
 ``` cd translatorProtutype/k8sconfig```
 ```./constructCluster.sh``` -- This will create the kubernetes cluster with the two micro services, mongo as
 the backend db for both microservices, nginx as a load balancer, and prometheus for monitoring.
@@ -105,7 +103,7 @@ sudo vi /etc/hosts
 
     -Create data translate definition via mappers:
     
-        ```curl -d "profileId=carrierXMappings&targetClass=com.mjdsft.dozerexample.Future" -X POST http://mapper.localhost/mapper/create```
+        ```curl -d "profileId=carrierXMappings&versionId=1&targetClass=com.mjdsft.dozerexample.Future" -X POST http://mapper.localhost/mapper/create```
         
         Example response: 5c22ce4b97cdfb0009952931
         
@@ -120,21 +118,21 @@ sudo vi /etc/hosts
         
      -Add conversion files to the data translate definition:
      
-        '''curl -F "file=@/Users/michaeldolbear/code/myprojects/dataTranslator/mapper/src/test/resources/dozer/InstrumentMapping.xml" -F "profileId=carrierXMappings" http://mapper.localhost/mapper/addOrUpdateNodeFile'''
+        '''curl -F "file=@/Users/michaeldolbear/code/myprojects/dataTranslator/mapper/src/test/resources/dozer/InstrumentMapping.xml" -F "profileId=carrierXMappings" -F "versionId=1" http://mapper.localhost/mapper/addOrUpdateNodeFile'''
         
         Example response:
         
         {"id":"5c22ce4b97cdfb0009952931","userProfileIdentifier":"carrierXMappings","creationDate":"2018-12-26T00:41:47.616+0000","version":1,"translatorNodes":[{"id":"5c239b2a97cdfb0009952934","filename":"InstrumentMapping.xml"}],"sourceObjectDescription":{"id":"5c22ce4b97cdfb0009952930","fields":[]},"targetClassName":"com.mjdsft.dozerexample.Future"}
         
         
-        '''curl -F "file=@/Users/michaeldolbear/code/myprojects/dataTranslator/mapper/src/test/resources/dozer/FutureMapping.xml" -F "profileId=carrierXMappings" http://mapper.localhost/mapper/addOrUpdateNodeFile'''
+        '''curl -F "file=@/Users/michaeldolbear/code/myprojects/dataTranslator/mapper/src/test/resources/dozer/FutureMapping.xml" -F "profileId=carrierXMappings"  -F "versionId=1" http://mapper.localhost/mapper/addOrUpdateNodeFile'''
         
         Example response:
         {"id":"5c22ce4b97cdfb0009952931","userProfileIdentifier":"carrierXMappings","creationDate":"2018-12-26T00:41:47.616+0000","version":1,"translatorNodes":[{"id":"5c239b2a97cdfb0009952934","filename":"InstrumentMapping.xml"},{"id":"5c239bac97cdfb0009952939","filename":"FutureMapping.xml"}],"sourceObjectDescription":{"id":"5c22ce4b97cdfb0009952930","fields":[]},"targetClassName":"com.mjdsft.dozerexample.Future"}
 
     -Add source object fields:
     
-        ```curl -X POST "http://mapper.localhost/mapper/addSourceFields?fields=instrumentType%2CexternalId%2Cid%2Csymbol%2CunderlyingId%2CexpirationDate%2CeffectiveDate%2CcontractSize%2CfutureType%2CfirstNoticeDate%2ClastTradingDate&fields=&profileId=carrierXMappings" -H "accept: */*"'''
+        ```curl -X POST "http://mapper.localhost/mapper/addSourceFields?fields=instrumentType%2CexternalId%2Cid%2Csymbol%2CunderlyingId%2CexpirationDate%2CeffectiveDate%2CcontractSize%2CfutureType%2CfirstNoticeDate%2ClastTradingDate&fields=&profileId=carrierXMappings&versionId=1" -H "accept: */*"'''
         
         Example response: 
         
