@@ -1,0 +1,27 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: mapper 
+spec:
+  selector:
+    matchLabels:
+      app: mapper 
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mapper 
+        tier: backend
+        team: mjdsft
+    spec:
+      containers:
+      - name: mapper 
+        image: mdolbear/mapper:1.0-SNAPSHOT
+        ports:
+        - containerPort: 8080
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1%
+      maxUnavailable: 1%

@@ -1,0 +1,27 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: k8provision
+spec:
+  selector:
+    matchLabels:
+      app: k8provision
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: k8provision
+        tier: backend
+        team: mjdsft
+    spec:
+      containers:
+      - name: k8provision
+        image: mdolbear/k8provision:1.0-SNAPSHOT
+        ports:
+        - containerPort: 8080
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1%
+      maxUnavailable: 1%
