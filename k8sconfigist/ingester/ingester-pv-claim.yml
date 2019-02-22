@@ -1,0 +1,11 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ingester-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+  - ReadOnlyMany
+  resources:
+    requests:
+      storage: 3Gi
