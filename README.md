@@ -157,7 +157,7 @@ sudo vi /etc/hosts
         
         You should see the translated data in the logs in the shell where you did the kubectl command.
         
-    - See the resulting data run persited in mongo:
+    - See the resulting data run persisted in mongo:
     
         ```curl http://ingester.localhost/ingester/dataRunsByProfileId?profileId=carrierXMappings```
         
@@ -230,3 +230,79 @@ I've mapped swagger doc for the ingester and the mapper micro services. Here are
 ```http://mapper.localhost/swagger-ui.html```
 
 ```http://ingester.localhost/swagger-ui.html#/```
+
+#Docker compose commands:
+
+There is a docker-compose.yml file that shows an example of how to use docker compose
+with this application. Some of the important cli commands are:
+
+docker-compose up -d #Starts compose in background mode
+docker-compose ps #Shows all services and descriptive info
+docker-compose down  #Shuts down compose
+
+-Run an example with docker-compose:
+
+    -Create data translate definition via mappers:
+    
+        ```curl -d "profileId=carrierXMappings&versionId=1&targetClass=com.mjdsft.dozerexample.Future" -X POST http://localhost:8060/mapper/create```
+        
+        Example response: 5c22ce4b97cdfb0009952931
+        
+    -Find the data translate definition just created:
+    
+        ```curl http://localhost:8060/mapper/dataTranslatorByProfileId?profileId=carrierXMappings```
+        
+        Example response: 
+        {"id":"5c22ce4b97cdfb0009952931","userProfileIdentifier":"carrierXMappings",
+        "creationDate":"2018-12-26T00:41:47.616+0000","version":1,"translatorNodes":[],"sourceObjectDescription":
+        {"id":"5c22ce4b97cdfb0009952930","fields":[]},"targetClassName":"com.mjdsft.dozerexample.Future"}
+        
+     -Add conversion files to the data translate definition:
+     
+        '''curl -F "file=@/Users/michaeldolbear/code/myprojects/dataTranslator/mapper/src/test/resources/dozer/InstrumentMapping.xml" -F "profileId=carrierXMappings" -F "versionId=1" http://localhost:8060/mapper/addOrUpdateNodeFile'''
+        
+        Example response:
+        
+        {"id":"5c22ce4b97cdfb0009952931","userProfileIdentifier":"carrierXMappings","creationDate":"2018-12-26T00:41:47.616+0000","version":1,"translatorNodes":[{"id":"5c239b2a97cdfb0009952934","filename":"InstrumentMapping.xml"}],"sourceObjectDescription":{"id":"5c22ce4b97cdfb0009952930","fields":[]},"targetClassName":"com.mjdsft.dozerexample.Future"}
+        
+        
+        '''curl -F "file=@/Users/michaeldolbear/code/myprojects/dataTranslator/mapper/src/test/resources/dozer/FutureMapping.xml" -F "profileId=carrierXMappings"  -F "versionId=1" http://localhost:8060/mapper/addOrUpdateNodeFile'''
+        
+        Example response:
+        {"id":"5c22ce4b97cdfb0009952931","userProfileIdentifier":"carrierXMappings","creationDate":"2018-12-26T00:41:47.616+0000","version":1,"translatorNodes":[{"id":"5c239b2a97cdfb0009952934","filename":"InstrumentMapping.xml"},{"id":"5c239bac97cdfb0009952939","filename":"FutureMapping.xml"}],"sourceObjectDescription":{"id":"5c22ce4b97cdfb0009952930","fields":[]},"targetClassName":"com.mjdsft.dozerexample.Future"}
+
+    -Add source object fields:
+    
+        ```curl -X POST "http://localhost:8060/mapper/addSourceFields?fields=instrumentType%2CexternalId%2Cid%2Csymbol%2CunderlyingId%2CexpirationDate%2CeffectiveDate%2CcontractSize%2CfutureType%2CfirstNoticeDate%2ClastTradingDate&fields=&profileId=carrierXMappings&versionId=1" -H "accept: */*"'''
+        
+        Example response: 
+        
+        {"id":"5c22ce4b97cdfb0009952931","userProfileIdentifier":"carrierXMappings","creationDate":"2018-12-26T00:41:47.616+0000","version":1,"translatorNodes":[{"id":"5c239b2a97cdfb0009952934","filename":"InstrumentMapping.xml"},{"id":"5c239bac97cdfb0009952939","filename":"FutureMapping.xml"}],"sourceObjectDescription":{"id":"5c22ce4b97cdfb0009952930","fields":["instrumentType","externalId","id","symbol","underlyingId","expirationDate","effectiveDate","contractSize","futureType","firstNoticeDate","lastTradingDate"]},"targetClassName":"com.mjdsft.dozerexample.Future"}
+
+    -Set up to watch logging of the back end ingester"
+    
+        
+        Example response:
+        
+        NAME                        READY     STATUS    RESTARTS   AGE
+        ingester-675d9ddf99-jcgfm   1/1       Running   0          4h
+        mapper-558f8bbb4f-hlhsc     1/1       Running   0          4h
+        mongo-7bbbc577d6-2zkqg      1/1       Running   0          4h
+        
+        
+    - Create and execute a data run. In a separate shell run, 
+        
+        ```curl -d "profileId=carrierXMappings&version=1&directory=/tmp/generatedData&stopOnFail=true"  http://localhost:8070/ingester/create```
+        
+        
+    - See the resulting data run persisted in mongo:
+    
+        ```curl http://localhost:8070/ingester/dataRunsByProfileId?profileId=carrierXMappings```
+        
+#Swagger Documentation (for docker-compose)
+
+I've mapped swagger doc for the ingester and the mapper micro services. Here are the urls:
+
+```http://localhost:8060/swagger-ui.html```
+
+```http://localhost:8070/swagger-ui.html#/```

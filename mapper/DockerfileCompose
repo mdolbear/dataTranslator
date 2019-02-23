@@ -20,7 +20,7 @@ ARG JAR_FILE
 
 ADD ${JAR_FILE} mapper-1.0-SNAPSHOT.jar
 
-EXPOSE 6000 8000
+EXPOSE 6000 8060
 ENV JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,address=6000,suspend=n"
 
-ENTRYPOINT java $JAVA_OPTS $JAVA_ARGS -Dspring.profiles.active=prod -jar /mapper-1.0-SNAPSHOT.jar
+ENTRYPOINT java $JAVA_OPTS $JAVA_ARGS -Dspring.profiles.active=dev -jar /mapper-1.0-SNAPSHOT.jar

@@ -1,0 +1,34 @@
+version: "3"
+services:
+    mongo:
+        image: mongo
+        ports:
+           - "27017:27017"
+        networks:
+            - app
+        #network_mode: bridge
+        volumes:
+            - /tmp/mongo:/data/db
+            
+    mapper:
+        image: mdolbear/mapper:1.0-SNAPSHOT
+        ports:
+            - "8060:8060"
+        networks:
+            - app
+        #network_mode: bridge
+            
+    ingester:
+        image: mdolbear/ingester:1.0-SNAPSHOT
+        ports:
+            - "8070:8070"
+        networks:
+            - app
+        #network_mode: bridge
+        volumes:
+            - /tmp/generatedData:/tmp/generatedData
+        
+networks:
+  app:
+    driver: bridge
+    

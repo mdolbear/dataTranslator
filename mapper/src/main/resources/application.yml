@@ -26,18 +26,32 @@ management:
 
 spring:
   profiles:
-    active: "dev"
+    active: "test"
 
+---
+spring:
+    profiles: test
+    
 ---
 
 spring:
   profiles: dev
   data:
-    mongodb.uri: mongodb://localhost:27017/db
+     mongodb:
+#      uri: mongodb://mongo:27017/db
+       host: mongo
+       port: 27017
+       database: db
+server:
+    port: 8060
 
 ---
 spring:
   profiles: prod
   data:
-    mongodb.uri: mongodb://mongo:27017/db
+     mongodb:
+#      uri: mongodb://mongo:27017/db
+       host: mongo
+       port: 27017
+       database: db
 
