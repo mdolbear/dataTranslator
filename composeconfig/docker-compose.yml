@@ -14,6 +14,7 @@ services:
         image: mdolbear/mapper:1.0-SNAPSHOT
         ports:
             - "8060:8060"
+            - "6000:6000"
         networks:
             - app
         #network_mode: bridge
@@ -22,6 +23,7 @@ services:
         image: mdolbear/ingester:1.0-SNAPSHOT
         ports:
             - "8070:8070"
+            - "4000:4000"
         networks:
             - app
         #network_mode: bridge
