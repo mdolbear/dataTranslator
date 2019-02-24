@@ -303,6 +303,7 @@ public class FileParsingSubscriber implements Subscriber<Path> {
             tempObject =
                     (TargetObject)this.getDozerMapper().map(tempMap,this.getTargetClass());
             this.getTargetConnection().postTargetObject(tempObject);
+            this.updateNumberOfSuccessfulRecordConversions();
 
         }
         catch (Exception e) {
@@ -313,7 +314,7 @@ public class FileParsingSubscriber implements Subscriber<Path> {
     }
 
     /**
-     * Depending on what is specfied in my data run, either bail out or continue
+     * Depending on what is specified in my data run, either bail out or continue
      * with processing
      * @param e Exception
      */
@@ -399,7 +400,7 @@ public class FileParsingSubscriber implements Subscriber<Path> {
 
 
     /**
-     * Create parser for aline
+     * Create parser for aLine
      * @param aLine String
      * @return CSVParser
      */
@@ -419,6 +420,20 @@ public class FileParsingSubscriber implements Subscriber<Path> {
                         .withHeader(aSourceObjectDescription.getFieldsSortedByIndexAsStrings());
     }
 
+    /**
+     * Update number of successful record conversions
+     */
+    private void updateNumberOfSuccessfulRecordConversions() {
+        
+        DataRun tempRun;
+        
+        tempRun = this.findDataRunById();
+        tempRun.incrementNumberOfSuccessfulRecordConversions();
+        this.getIngesterService().updateDataRun(tempRun);
+        
+    }
+    
+    
     /**
      * Find a DataRun by id
      * @return DataRun

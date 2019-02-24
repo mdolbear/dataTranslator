@@ -58,7 +58,7 @@ public class DataRun {
     /**
      * Answer an instance for the arguments below
      * @param aUserProfileId String
-     * @param isStopOnFailure booelan
+     * @param isStopOnFailure boolean
      */
     public DataRun(String aUserProfileId,
                    boolean isStopOnFailure) {
