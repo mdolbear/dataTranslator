@@ -20,6 +20,9 @@ public class SubscriberCache {
 
     @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE)
     private Map<String, Subscriber<Path>> subscribers;
+    
+    //Constants
+    private static final int NUMBER_FOR_OCCUPIED = 0;
 
     /**
      * Answer a default instance
@@ -69,6 +72,19 @@ public class SubscriberCache {
     public boolean isEmpty() {
 
         return this.getSubscribers().isEmpty();
+    }
+    
+    /**
+     * Answer whether or not I am considered occupied. This will be
+     * some load in the cache that is considered a proper number of fluxes
+     * per vm that is the optimum load.
+     * @return boolean
+     */
+    @Synchronized("accessLock")
+    public boolean isOccupied() {
+        
+        return this.getSubscribers().size() > 
+                    NUMBER_FOR_OCCUPIED;
     }
 
 

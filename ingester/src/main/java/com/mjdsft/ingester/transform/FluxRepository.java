@@ -15,4 +15,11 @@ public interface FluxRepository {
     void createDataIngester(@NonNull String aDirectoryPath,
                             @NonNull String aDataRunId,
                             @NonNull DataTranslateDefinition aDefinition);
+    
+    /**
+     * Answer whether or not I am occupied. Delegate to my flux cache
+     * @return boolean
+     */
+    public boolean isOccupied();
+    
 }

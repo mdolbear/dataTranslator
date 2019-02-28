@@ -91,6 +91,16 @@ public class FluxRepositoryImpl implements FluxRepository {
         tempFlux.subscribe(tempSubscriber);
 
     }
+    
+    /**
+     * Answer whether or not I am occupied. Delegate to my flux cache
+     * @return boolean
+     */
+    @Override
+    public boolean isOccupied() {
+        
+        return this.getCache().isOccupied();
+    }
 
     /**
      * Create subscriber

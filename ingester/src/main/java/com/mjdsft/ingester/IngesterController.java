@@ -130,6 +130,16 @@ public class IngesterController {
         return this.asDataRunInfos(tempRuns);
 
     }
+    
+    /**
+     * Evaluate my readiness
+     * @return ResponseEntity<String>
+     */
+    @GetMapping("/readiness")
+    public ResponseEntity<String> evaluateMyReadiness() {
+        
+        return this.evaluateReadiness();
+    }
 
     /**
      * Find DataRun by its id
@@ -185,7 +195,26 @@ public class IngesterController {
 
 
     /**
-     * Validate data trnalsate definition exists for aProfileId and aVersion
+     * Evaluate readiness
+     * @return ResponseEntity
+     */
+    private ResponseEntity<String> evaluateReadiness() {
+        
+        String      tempMsg = "Can run";
+        HttpStatus  tempStat = HttpStatus.OK;
+        
+        if (this.getFluxRepository().isOccupied()) {
+            
+            tempMsg = "Maximum number of fluxes exceeded";
+            tempStat = HttpStatus.SERVICE_UNAVAILABLE;
+        }
+        
+        return new ResponseEntity<String>(tempMsg, tempStat);
+        
+    }
+    
+    /**
+     * Validate data translate definition exists for aProfileId and aVersion
      * @param aProfileId String
      * @param aVersion int
      * @param aDef DataTranslateDefinition

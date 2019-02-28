@@ -7,7 +7,7 @@ spec:
     matchLabels:
       app: ingester 
       tier: backend
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -27,6 +27,17 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /tmp/generatedData
+        # the readiness probe details
+        readinessProbe:
+          httpGet: # make an HTTP request
+            port: 8080 # port to use
+            path: /ingester/readiness # endpoint to hit
+            scheme: HTTP
+          initialDelaySeconds: 5 # how long to wait before checking
+          periodSeconds: 3 # how long to wait between checks
+          successThreshold: 1 # how many successes to hit before accepting
+          failureThreshold: 1 # how many failures to accept before failing
+          timeoutSeconds: 1 # how long to wait for a response
   strategy:
     type: RollingUpdate
     rollingUpdate:
