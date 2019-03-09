@@ -39,7 +39,7 @@ import static junit.framework.TestCase.assertTrue;
                 webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IngesterControllerTest {
 
-    public static final int WAIT_COMPLETION_TIMEOUT = 2 * 1000;
+
     @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE)
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -61,6 +61,7 @@ public class IngesterControllerTest {
     private static String FIND_DATA_RUN_BY_PROFILE_ID_AND_STATE = "/ingester/dataRunsByProfileIdAndState";
     private static String FIND_DATA_RUN_BY_ID = "/ingester/dataRunById";
     private static final String DELETE_DATA_TRANS_DEF_URI = "/ingester/delete";
+    public static final int WAIT_COMPLETION_TIMEOUT = 2 * 1000;
 
     private static int NUMBER_OF_WAIT_ITERATIONS = 20;
 
