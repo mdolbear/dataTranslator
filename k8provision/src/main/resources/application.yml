@@ -1,7 +1,7 @@
 logging:
   level:
     org.springframework: ERROR
-    com.oracle: DEBUG
+    com.mjdsft: DEBUG
 
 app:
   applicationName: K8Provision
@@ -23,4 +23,54 @@ management:
       exposure:
         include: "*"
 
+---
+
+spring:
+  profiles: test
+  flyway:
+    locations: classpath:db/migration
+  datasource:
+    url: jdbc:tc:mysql:5.7.22://localhost:3306/demoprojectsdb
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    show-sql: true
+    hibernate.ddl-auto: none
+    hibernate.naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  quartz:
+    auto-startup: true
+    job-store-type: jdbc
+#    jdbc:
+#      initialize-schema: always
+    properties:
+      org.quartz.threadPool.threadCount: 5
+
+
+---
+
+spring:
+  profiles: prod
+  flyway:
+    locations: classpath:db/migration
+  datasource:
+    url: jdbc:mysql://mysql:3306/demoprojectsdb?useSSL=false&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: guswhana
+    testWhileIdle: true
+    validationQuery: SELECT 1
+  jpa:
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    show-sql: true
+    hibernate.ddl-auto: none
+    hibernate.naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  quartz:
+    auto-startup: true
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+    properties:
+      org.quartz.threadPool.threadCount: 5
 

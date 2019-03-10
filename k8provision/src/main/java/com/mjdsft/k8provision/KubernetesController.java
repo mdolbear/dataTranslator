@@ -1,7 +1,12 @@
 package com.mjdsft.k8provision;
 
+import com.mjdsft.k8provision.services.K8sJobSchedulerService;
+import com.mjdsft.k8provision.services.KubernetesService;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class KubernetesController {
 
+    @Getter(AccessLevel.PRIVATE)
+    @Autowired
+    private KubernetesService kubernetesService;
+
+    @Getter(AccessLevel.PRIVATE)
+    @Autowired
+    private K8sJobSchedulerService jobSchedulerService;
 
     /**
      * Answer my logger
@@ -22,6 +34,31 @@ public class KubernetesController {
      */
     private static Logger getLogger() {
         return log;
+    }
+
+
+    /**
+     * Answer a default instance
+     */
+    public KubernetesController() {
+
+        super();
+    }
+
+    /**
+     * Schedule scanner job for aNamespace and boolean isInsideCluster
+     * @param aNamespace String
+     * @param @param isInsideCluster boolean
+     * @return ResponseEntity
+     */
+    @PostMapping("/scheduleNamespaceScan")
+    public ResponseEntity<Boolean> scheduleNamespaceScan(@RequestParam("namespace") String aNamespace,
+                                                         @RequestParam("insideCluster") boolean isInsideCluster) {
+
+        this.getJobSchedulerService().createAndScheduleJobForNamespaceScan(aNamespace,isInsideCluster);
+
+        return this.produceSuccessfulResponseState(new Boolean(true));
+
     }
 
 
@@ -39,33 +76,14 @@ public class KubernetesController {
                                                     @RequestParam("numpods") int aNewNumberOfPods,
                                                     @RequestParam("insideCluster") boolean isInsideCluster) {
 
-        KubernetesUtilities tempUtils = new KubernetesUtilities(isInsideCluster);
-
-        try {
-            tempUtils.initializeClient();
-            tempUtils.scaleDeployment(aNamespace, aDeploymentName, aNewNumberOfPods);
-        }
-        catch (Exception e) {
-
-            this.logMessageAndThrowExceptionOnScaleFailure(e);
-
-        }
+        this.getKubernetesService().scaleApplication(aNamespace,
+                                                     aDeploymentName,
+                                                     aNewNumberOfPods,
+                                                     isInsideCluster);
 
         return this.produceSuccessfulResponseState(new Boolean(true));
     }
 
-    /**
-     * Log and throw exception on failed scale.
-     * @param e ApiException
-     * @return
-     */
-    private ResponseEntity<Boolean> logMessageAndThrowExceptionOnScaleFailure(Exception e) {
-
-        String  tempMessage = "Failed to successful perform scale operation";
-
-        getLogger().error(tempMessage, e);
-        throw new RuntimeException(tempMessage, e);
-    }
 
     /**
      * Answer a successful response for HttpStatus

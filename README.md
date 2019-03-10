@@ -182,6 +182,31 @@ alerting, etc.
 
 #Scale deployment of a pod
 
+I've added quartz to this service. So you will need to do the following when first attempting to run the example:
+
+To get to mysql client:
+kubectl get pods -- for the it command below
+kubectl exec -it mysql-587f56f69-244sx  -- /bin/bash
+
+Once in the container, run:
+mysql mysql -u root -p
+
+Pw: guswhana
+
+In mysql,
+
+create database demoprojectsdb;
+
+use demoprojectsdb;
+
+show tables; -- to make sure there are no tables
+
+Nothing should be present
+
+
+
+Now for handling the provisioning pod once the db is set up:
+
 kubectl get pods -- to get the name of the kubernetes provisioning pod
 
 kubectl get deployments
@@ -198,9 +223,14 @@ kubectl port-forward k8provision-65766d9b86-ltd2h 8080:8080 -- to get access to 
 
 curl -d "namespace=default&deployment=ingester&numpods=2&insideCluster=true" -X POST http://localhost:8080/k8provision/scale
 
+This command will schedule the scan of a given namespace to run every minute:
+
+curl -d "namespace=default&insideCluster=true" -X POST http://localhost:8080/k8provision/scheduleNamespaceScan
+
 Now after running the scale operation, go look at the ingester pods:
 
 5c27e41a12124e0008a2673aip-192-168-0-50:dataTranslator michaeldolbear$ kubectl get pods
+
 
 NAME                           READY     STATUS    RESTARTS   AGE
 

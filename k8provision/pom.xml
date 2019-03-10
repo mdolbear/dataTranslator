@@ -46,16 +46,29 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
-      <!-- Micormeter core dependecy  -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+    </dependency>
       <dependency>
-          <groupId>io.micrometer</groupId>
-          <artifactId>micrometer-core</artifactId>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-quartz</artifactId>
+          <version>2.1.3.RELEASE</version>
       </dependency>
-      <!-- Micrometer Prometheus registry  -->
-      <dependency>
-          <groupId>io.micrometer</groupId>
-          <artifactId>micrometer-registry-prometheus</artifactId>
-      </dependency>
+    <!-- Micrometer core dependency  -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-core</artifactId>
+     </dependency>
+    <!-- Micrometer Prometheus registry  -->
+   <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+   </dependency>
     <dependency>
           <groupId>org.projectlombok</groupId>
           <artifactId>lombok</artifactId>
@@ -76,6 +89,47 @@
           <version>${k8sclient.version}</version>
           <scope>compile</scope>
     </dependency>
+      <!-- These dependencies are required since java 11 does not include them-->
+      <dependency>
+          <groupId>javax.xml.bind</groupId>
+          <artifactId>jaxb-api</artifactId>
+          <version>2.3.0</version>
+      </dependency>
+      <dependency>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-core</artifactId>
+          <version>2.3.0</version>
+      </dependency>
+      <dependency>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-impl</artifactId>
+          <version>2.3.0</version>
+      </dependency>
+      <dependency>
+          <groupId>javax.activation</groupId>
+          <artifactId>javax.activation-api</artifactId>
+          <version>1.2.0</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-csv</artifactId>
+          <version>1.5</version>
+      </dependency>
+      <!--end of java 11 dependencies-->
+      <dependency>
+          <groupId>org.testcontainers</groupId>
+          <artifactId>testcontainers</artifactId>
+          <version>1.9.1</version>
+      </dependency>
+      <dependency>
+          <groupId>org.testcontainers</groupId>
+          <artifactId>mysql</artifactId>
+          <version>1.9.1</version>
+      </dependency>
+      <dependency>
+          <groupId>org.flywaydb</groupId>
+          <artifactId>flyway-core</artifactId>
+      </dependency>
   </dependencies>
 
     <profiles>

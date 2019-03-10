@@ -1,3 +1,7 @@
+#MySql
+kubectl create -f mysql/mysql-persistent-volume.yml
+kubectl create -f mysql/mysql-deployment.yml
+
 #Mongo
 kubectl create -f mongo/mongo-persistent-volume.yml
 kubectl create -f mongo/mongo-pv-claim.yml
