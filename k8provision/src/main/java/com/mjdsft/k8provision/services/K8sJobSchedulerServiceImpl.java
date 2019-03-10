@@ -1,5 +1,6 @@
 package com.mjdsft.k8provision.services;
 
+import com.mjdsft.k8provision.info.DeleteJobInfo;
 import com.mjdsft.k8provision.jobs.LogCurrentServicesJob;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.ZonedDateTime;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -22,6 +22,10 @@ public class K8sJobSchedulerServiceImpl implements K8sJobSchedulerService {
     @Getter(AccessLevel.PRIVATE)
     @Autowired
     private Scheduler scheduler;
+
+    //Constants
+    private static final String NAMESPACE_SCAN_JOB_GROUP_ID =
+                                    LogCurrentServicesJob.class.getSimpleName();
 
     /**
      * Answer my logger
@@ -70,6 +74,34 @@ public class K8sJobSchedulerServiceImpl implements K8sJobSchedulerService {
     }
 
     /**
+     * Cancel and delete namespace scan job
+     * @param aNamespace String
+     * @return DeleteJobInfo
+     */
+    @Override
+    public DeleteJobInfo cancelAndDeleteNamespaceScanJob(String aNamespace) {
+
+        boolean tempUnscheduleCondition = false;
+        boolean tempDeleteCondition = false;
+
+        try {
+
+            tempUnscheduleCondition =
+                    this.getScheduler().unscheduleJob(new TriggerKey(aNamespace, NAMESPACE_SCAN_JOB_GROUP_ID));
+            tempDeleteCondition =
+                    this.getScheduler().deleteJob(new JobKey(aNamespace, NAMESPACE_SCAN_JOB_GROUP_ID));
+        }
+        catch (SchedulerException e) {
+
+            getLogger().error("Failed to cancel and delete job", e);
+            throw new RuntimeException(e);
+        }
+
+        return new DeleteJobInfo(tempUnscheduleCondition, tempDeleteCondition);
+
+    }
+
+    /**
      * Create job detail for aNamespace and isInsideCluster
      * @param aNamespace String
      * @param isInsideCluster boolean
@@ -84,7 +116,7 @@ public class K8sJobSchedulerServiceImpl implements K8sJobSchedulerService {
         tempMap.put("isInsideCluster", new Boolean(isInsideCluster));
 
         return JobBuilder.newJob(LogCurrentServicesJob.class)
-                         .withIdentity(UUID.randomUUID().toString(), "logCurrentServicesJob")
+                         .withIdentity(aNamespace, NAMESPACE_SCAN_JOB_GROUP_ID)
                          .withDescription("Log Current pods for a Namespace")
                          .usingJobData(tempMap)
                          .storeDurably()
@@ -103,7 +135,8 @@ public class K8sJobSchedulerServiceImpl implements K8sJobSchedulerService {
 
         return TriggerBuilder.newTrigger()
                              .forJob(aDetail)
-                             .withIdentity(aDetail.getKey().getName())
+                             .withIdentity(aDetail.getKey().getName(),
+                                           NAMESPACE_SCAN_JOB_GROUP_ID)
                              .withDescription("Log Current pods for a Namespace Trigger")
                              .startAt(Date.from(aStartTime.toInstant()))
                              .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(30))

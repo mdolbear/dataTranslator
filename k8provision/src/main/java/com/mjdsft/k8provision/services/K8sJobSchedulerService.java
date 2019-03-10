@@ -1,5 +1,7 @@
 package com.mjdsft.k8provision.services;
 
+import com.mjdsft.k8provision.info.DeleteJobInfo;
+
 public interface K8sJobSchedulerService {
 
     /**
@@ -9,5 +11,13 @@ public interface K8sJobSchedulerService {
      */
     void createAndScheduleJobForNamespaceScan(String aNamespace,
                                               boolean isInsideCluster);
+
+    /**
+     * Cancel and delete namespace scan job
+     * @param aNamespace String
+     * @return DeleteJobInfo
+     */
+    public DeleteJobInfo cancelAndDeleteNamespaceScanJob(String aNamespace);
+
 
 }

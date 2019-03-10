@@ -1,5 +1,6 @@
 package com.mjdsft.k8provision;
 
+import com.mjdsft.k8provision.info.DeleteJobInfo;
 import com.mjdsft.k8provision.services.K8sJobSchedulerService;
 import com.mjdsft.k8provision.services.KubernetesService;
 import lombok.AccessLevel;
@@ -9,10 +10,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/k8provision")
@@ -59,6 +57,22 @@ public class KubernetesController {
 
         return this.produceSuccessfulResponseState(new Boolean(true));
 
+    }
+
+    /**
+     * Cancel and delete namespace scan job for aNamespace
+     * @param aNamespace String
+     * @return ResponseEntity
+     */
+    @DeleteMapping("/cancelNamespaceScan")
+    public ResponseEntity<DeleteJobInfo> cancelNamespaceScan(@RequestParam("namespace") String aNamespace) {
+
+        DeleteJobInfo tempInfo;
+
+        tempInfo = this.getJobSchedulerService().cancelAndDeleteNamespaceScanJob(aNamespace);
+
+        return new ResponseEntity<DeleteJobInfo>(tempInfo,
+                                                 HttpStatus.OK);
     }
 
 

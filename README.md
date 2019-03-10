@@ -219,13 +219,18 @@ mapper        1         1         1            1           6m
 mongo         1         1         1            1           6m
 ip-192-168-0-50:dataTranslator michaeldolbear$
 
-kubectl port-forward k8provision-65766d9b86-ltd2h 8080:8080 -- to get access to the internal k8s provisining service
+kubectl port-forward k8provision-65766d9b86-ltd2h 9080:8080 -- to get access to the internal k8s provisining service
 
-curl -d "namespace=default&deployment=ingester&numpods=2&insideCluster=true" -X POST http://localhost:8080/k8provision/scale
+curl -d "namespace=default&deployment=ingester&numpods=2&insideCluster=true" -X POST http://localhost:9080/k8provision/scale
 
 This command will schedule the scan of a given namespace to run every minute:
 
-curl -d "namespace=default&insideCluster=true" -X POST http://localhost:8080/k8provision/scheduleNamespaceScan
+curl -d "namespace=default&insideCluster=true" -X POST http://localhost:9080/k8provision/scheduleNamespaceScan
+
+This command will stop the scan from above:
+
+curl -d "namespace=default" -X DELETE http://localhost:9080/k8provision/cancelNamespaceScan
+
 
 Now after running the scale operation, go look at the ingester pods:
 

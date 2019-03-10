@@ -41,8 +41,8 @@ spring:
   quartz:
     auto-startup: true
     job-store-type: jdbc
-#    jdbc:
-#      initialize-schema: always
+    jdbc:
+      initialize-schema: always
     properties:
       org.quartz.threadPool.threadCount: 5
 
