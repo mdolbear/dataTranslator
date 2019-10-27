@@ -97,8 +97,7 @@ public class DataCSVFileCreator {
         try (FileWriter tempOutWriter = new FileWriter(aPath.toFile())) {
 
             try (CSVPrinter tempPrinter = new CSVPrinter(tempOutWriter,
-                                                         CSVFormat.DEFAULT.withHeader(FILE_HEADERS)
-                                                                          .withSkipHeaderRecord())) {
+                                                         CSVFormat.DEFAULT.withHeader(FILE_HEADERS))) {
 
                 this.printRandomizedData(tempPrinter,
                                          aNumberOfLines);
@@ -159,7 +158,7 @@ public class DataCSVFileCreator {
         tempLine[2] =  UUID.randomUUID().toString();
         tempLine[3] = this.getRandomStockSymbol();
 
-        tempLine[4] = UUID.randomUUID().toString();
+        tempLine[4] = ""; //UUID.randomUUID().toString();
         tempLine[5] = this.createRandomDateFromNow().toString();
         tempLine[6] = this.createRandomDateFromNow().toString();
         tempLine[7] = String.valueOf((Math.abs(new Random().nextInt())));

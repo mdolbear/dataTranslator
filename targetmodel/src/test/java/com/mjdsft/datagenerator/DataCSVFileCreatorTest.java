@@ -39,7 +39,7 @@ public class DataCSVFileCreatorTest {
 
             assertTrue("File does not exist", tempFile.exists() &&
                                 (this.getCountOfLinesInFile(tempFile)
-                                         == tempCount));
+                                         == tempCount + 1));
 
 
         }
