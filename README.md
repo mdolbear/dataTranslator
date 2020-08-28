@@ -219,7 +219,7 @@ mapper        1         1         1            1           6m
 mongo         1         1         1            1           6m
 ip-192-168-0-50:dataTranslator michaeldolbear$
 
-kubectl port-forward k8provision-65766d9b86-ltd2h 9080:8080 -- to get access to the internal k8s provisining service
+kubectl port-forward k8provision-65766d9b86-ltd2h 9080:8080 -- to get access to the internal k8s provisioning service
 
 curl -d "namespace=default&deployment=ingester&numpods=2&insideCluster=true" -X POST http://localhost:9080/k8provision/scale
 
