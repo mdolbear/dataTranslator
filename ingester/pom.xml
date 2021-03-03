@@ -113,6 +113,16 @@
           <artifactId>commons-csv</artifactId>
           <version>${csv.parser.version}</version>
       </dependency>
+      <dependency>
+          <groupId>com.graphql-java</groupId>
+          <artifactId>graphql-spring-boot-starter</artifactId>
+          <version>5.0.2</version>
+      </dependency>
+      <dependency>
+          <groupId>com.graphql-java</groupId>
+          <artifactId>graphql-java-tools</artifactId>
+          <version>5.2.4</version>
+      </dependency>
 
       <!-- These dependencies are required since java 11 does not include them-->
       <dependency>
