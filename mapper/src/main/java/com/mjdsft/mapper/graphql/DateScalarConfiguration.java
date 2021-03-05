@@ -25,7 +25,8 @@ public class DateScalarConfiguration  {
                     public String serialize(final Object dataFetcherResult) {
                         if (dataFetcherResult instanceof Date) {
                             return dataFetcherResult.toString();
-                        } else {
+                        }
+                        else {
                             throw new CoercingSerializeException("Expected a Date object.");
                         }
                     }
@@ -35,10 +36,13 @@ public class DateScalarConfiguration  {
                         try {
                             if (input instanceof String) {
                                 return (new SimpleDateFormat()).parse((String) input, new ParsePosition(0));
-                            } else {
+                            }
+                            else {
                                 throw new CoercingParseValueException("Expected a String");
                             }
-                        } catch (DateTimeParseException e) {
+
+                        }
+                        catch (DateTimeParseException e) {
                             throw new CoercingParseValueException(String.format("Not a valid date: '%s'.", input), e
                             );
                         }
@@ -49,10 +53,12 @@ public class DateScalarConfiguration  {
                         if (input instanceof StringValue) {
                             try {
                                 return(new SimpleDateFormat()).parse((String) input, new ParsePosition(0));
-                            } catch (DateTimeParseException e) {
+                            }
+                            catch (DateTimeParseException e) {
                                 throw new CoercingParseLiteralException(e);
                             }
-                        } else {
+                        }
+                        else {
                             throw new CoercingParseLiteralException("Expected a StringValue.");
                         }
                     }

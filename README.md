@@ -369,6 +369,7 @@ to http://mapper.localhost/swagger-ui.html, assuming you modified your /etc/host
                 translatorNodes {
                                     id
                                     filename
+                                    contents
                 }
         }
    }

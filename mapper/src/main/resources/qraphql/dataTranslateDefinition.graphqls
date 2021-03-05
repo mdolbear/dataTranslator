@@ -1,5 +1,6 @@
 # java.util.Date implementation
 scalar Date
+scalar ByteArray
 
 type DataTranslateDefinition {
     id: ID!
@@ -25,7 +26,7 @@ type ObjectField {
 type NodeTranslateDefinition {
     id: ID!
     filename: String!
-    #contents: [Int]!
+    contents: ByteArray!
 }
 
 # The Root Query for the mapper
