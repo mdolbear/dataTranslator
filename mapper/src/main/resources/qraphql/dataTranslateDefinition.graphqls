@@ -1,0 +1,34 @@
+# java.util.Date implementation
+scalar Date
+
+type DataTranslateDefinition {
+    id: ID!
+    userProfileIdentifier: String
+    targetClassName: String
+    creationDate: Date!
+    translatorNodes: [NodeTranslateDefinition]!
+    sourceObjectDescription: ObjectDescription!
+}
+
+type ObjectDescription {
+    id: ID!
+    fields: [ObjectField]!
+}
+
+type ObjectField {
+    id: ID!
+    fieldName: String!
+    columnNumber: Int!
+
+}
+
+type NodeTranslateDefinition {
+    id: ID!
+    filename: String!
+    #contents: [Int]!
+}
+
+# The Root Query for the mapper
+type Query {
+    dataTranslationDefinitions(userProfileId: String!): [DataTranslateDefinition]!
+}

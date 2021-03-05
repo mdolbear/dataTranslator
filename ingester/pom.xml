@@ -114,16 +114,22 @@
           <version>${csv.parser.version}</version>
       </dependency>
       <dependency>
-          <groupId>com.graphql-java</groupId>
+          <groupId>com.graphql-java-kickstart</groupId>
           <artifactId>graphql-spring-boot-starter</artifactId>
-          <version>5.0.2</version>
+          <version>11.0.0</version>
       </dependency>
       <dependency>
-          <groupId>com.graphql-java</groupId>
-          <artifactId>graphql-java-tools</artifactId>
-          <version>5.2.4</version>
+          <groupId>com.graphql-java-kickstart</groupId>
+          <artifactId>graphql-spring-boot-starter-test</artifactId>
+          <version>11.0.0</version>
+          <scope>test</scope>
       </dependency>
-
+      <dependency>
+          <groupId>com.graphql-java-kickstart</groupId>
+          <artifactId>graphiql-spring-boot-starter</artifactId>
+          <version>11.0.0</version>
+          <scope>runtime</scope>
+      </dependency>
       <!-- These dependencies are required since java 11 does not include them-->
       <dependency>
           <groupId>javax.xml.bind</groupId>

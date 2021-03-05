@@ -341,3 +341,38 @@ I've mapped swagger doc for the ingester and the mapper micro services. Here are
 ```http://localhost:8060/swagger-ui.html```
 
 ```http://localhost:8070/swagger-ui.html#/```
+
+
+#Graph QL Experiment
+1) Build and construct the k8s cluster as shown above.
+2) Use the swagger interface to create a DataTranslationDefinition, add node files, and add source fields. You can go 
+to http://mapper.localhost/swagger-ui.html, assuming you modified your /etc/hosts file as seen above. You can use the
+   arguments that are seen in the curl commands above.
+3) Once those are added, open the Graph IQL tools using: http://mapper.localhost/graphiql. 
+   This will open the query interface.
+4) Now paste the following query into the upper left section of the tool after the comments:
+   ```
+   query {
+        dataTranslationDefinitions(userProfileId: "carrierXMappings") {
+                id
+                userProfileIdentifier
+                creationDate
+                targetClassName
+                sourceObjectDescription {
+                            id
+                            fields {
+                                        id
+                                        fieldName
+                                        columnNumber
+                           }
+                }
+                translatorNodes {
+                                    id
+                                    filename
+                }
+        }
+   }
+   ```
+   
+This should show the data that you added above. Removing or adding fields to the query will remove
+them from the result.
