@@ -6,7 +6,7 @@ The goal fo this project is to demonstrate some of the technologies that can be 
 (https://www.cncf.io/projects/). These technologies faciliate portability between cloud vendors without locking into
 their particular platforms.
 
-This prototype represents a scalable data translator Theinitial development time for this project was about one week. 
+This prototype represents a scalable data translator The initial development time for this project was about one week. 
 There are a few known missing parts:
 
 - Significant unit tests need to be added to improve code coverage.

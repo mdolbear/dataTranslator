@@ -1,13 +1,15 @@
 package com.mjdsft.datagenerator;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.MessageFormat;
 
-import static junit.framework.TestCase.assertTrue;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
+
 
 public class DataCSVFileCreatorTest {
 

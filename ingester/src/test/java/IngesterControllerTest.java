@@ -9,9 +9,9 @@ import com.mjdsft.mapper.model.ObjectField;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -32,9 +33,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.TestCase.assertTrue;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = IngesterApplication.class,
                 webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IngesterControllerTest {
@@ -85,7 +87,7 @@ public class IngesterControllerTest {
     /**
      * Setup -- insert data into mondgo embedded db
      */
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
 
         this.setDataTranslateDefinition(this.getMongoTemplate().save(this.createDataTranslateDefinition(),

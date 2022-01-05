@@ -13,13 +13,14 @@ import com.google.common.io.ByteStreams;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,10 +31,10 @@ import java.util.UUID;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(SpringExtension.class)
 public class IngesterTest {
 
     @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE)
@@ -91,7 +92,7 @@ public class IngesterTest {
     /**
      * Setup for test
      */
-    @Before
+    @BeforeEach
     public void setup() {
 
         this.setDataRun(new DataRun("someIdValue",
